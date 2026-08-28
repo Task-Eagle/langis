@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Langis | Futuristic Collaboration Suite</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        mono: ['"Fira Code"', 'monospace']
+                    },
+                    colors: {
+                        cyber: {
+                            cyan: '#00f2ff',
+                            purple: '#bd00ff',
+                            pink: '#ff007f',
+                            dark: '#0a0a12',
+                            panel: 'rgba(20, 20, 32, 0.7)',
+                            border: 'rgba(255, 255, 255, 0.12)'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --primary: #00f2ff;
+            --primary-glow: rgba(0, 242, 255, 0.35);
+            --accent: #bd00ff;
+            --bg-gradient: linear-gradient(135deg, #090914 0%, #15102a 50%, #060919 100%);
+            --glass-bg: rgba(18, 18, 30, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --blur-val: 24px;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
+        }
+
+        /* Ambient Dynamic Background Glow */
+        .ambient-bg {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.25;
+            animation: orbFloat 25s ease-in-out infinite alternate;
+        }
+        .orb-1 { width: 500px; height: 500px; background: #00f2ff; top: -100px; left: -100px; }
+        .orb-2 { width: 600px; height: 600px; background: #bd00ff; bottom: -150px; right: -100px; animation-delay: -7s; }
+        .orb-3 { width: 400px; height: 400px; background: #ff007f; top: 40%; left: 35%; animation-delay: -14s; }
+
+        @keyframes orbFloat {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(60px, 40px) scale(1.1); }
+            100% { transform: translate(-40px, 80px) scale(0.95); }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 999px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(0, 242, 255, 0.4); }
+
+        /* Glassmorphism Classes */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--blur-val));
+            -webkit-backdrop-filter: blur(var(--blur-val));
+            border: 1px solid var(--glass-border);
+        }
+
+        .glass-btn {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(12px);
+            transition: all 0.2s ease;
+        }
+        .glass-btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        /* Typing Dots Animation */
+        .typing-dot {
+            width: 6px; height: 6px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            display: inline-block;
+            animation: typingBounce 1.4s infinite ease-in-out both;
+        }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes typingBounce {
+            0%, 80%, 100% { transform: scale(0); opacity: 0.4; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Pulse Badge */
+        .status-pulse {
+            position: relative;
+        }
+        .status-pulse::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 50%;
+            background: inherit;
+            animation: statusPing 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+        }
+        @keyframes statusPing {
+            75%, 100% { transform: scale(2.2); opacity: 0; }
+        }
+
+        /* Message Animations */
+        .msg-anim {
+            animation: msgPop 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes msgPop {
+            from { opacity: 0; transform: translateY(8px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* Voice wave visualizer bars */
+        .wave-bar {
+            width: 3px;
+            background: var(--primary);
+            border-radius: 4px;
+            animation: waveAnim 1s ease-in-out infinite alternate;
+        }
+        @keyframes waveAnim {
+            0% { height: 6px; }
+            100% { height: 24px; }
+        }
+    </style>
+</head>
+<body class="flex flex-col h-screen overflow-hidden text-slate-100 select-none">
+    <!-- Ambient Background Graphic -->
+    <div class="ambient-bg">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <!-- Main Container Layout -->
+    <div id="app" class="flex flex-1 w-full h-full relative overflow-hidden">
+        
+        <!-- Leftmost Rail: Workspaces & Core Navigation -->
+        <div class="w-16 md:w-20 glass-card border-r border-white/10 flex flex-col items-center py-4 justify-between z-20 shrink-0">
+            <div class="flex flex-col items-center gap-5 w-full">
+                <!-- App Brand Logo -->
+                <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-cyan-400 to-purple-600 p-[2px] shadow-lg shadow-cyan-500/20 cursor-pointer group hover:scale-105 transition-all duration-300">
+                    <div class="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center font-bold text-cyan-400 group-hover:bg-transparent group-hover:text-white transition-all">
+                        <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                    </div>
+                </div>
+
+                <div class="w-8 h-[1px] bg-white/10 my-1"></div>
+
+                <!-- Workspaces -->
+                <div id="workspaceList" class="flex flex-col gap-3 w-full items-center">
+                    <button class="ws-btn active w-11 h-11 rounded-2xl bg-cyan-500/20 border border-cyan-400/50 flex items-center justify-center text-cyan-400 font-bold hover:scale-105 transition relative group" title="Quantum Core Lab">
+                        <span class="text-sm">QC</span>
+                        <div class="absolute right-0 w-1 h-6 bg-cyan-400 rounded-l-full"></div>
+                    </button>
+                    <button class="ws-btn w-11 h-11 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 hover:border-white/20 hover:scale-105 transition relative group" title="Design Systems">
+                        <span class="text-sm">DS</span>
+                    </button>
+                    <button class="ws-btn w-11 h-11 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 hover:border-white/20 hover:scale-105 transition relative group" title="AI Research Hub">
+                        <span class="text-sm">AI</span>
+                    </button>
+                    <button id="addWorkspaceBtn" class="w-11 h-11 rounded-2xl border border-dashed border-white/20 flex items-center justify-center text-slate-400 hover:text-cyan-400 hover:border-cyan-400/50 hover:bg-cyan-500/10 transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Bottom Rail Controls: Notifications & Settings & Profile Switcher -->
+            <div class="flex flex-col items-center gap-4">
+                <button id="quickNotificationBtn" class="relative p-2.5 rounded-xl text-slate-400 hover:text-cyan-400 hover:bg-white/5 transition" title="Notifications">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                    <span id="unreadBadge" class="absolute top-1 right-1 w-2.5 h-2.5 bg-cyan-400 rounded-full animate-ping"></span>
+                </button>
+                <button id="openSettingsBtn" class="p-2.5 rounded-xl text-slate-400 hover:text-cyan-400 hover:bg-white/5 transition" title="Workspace Settings">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                </button>
+                <div id="currentUserAvatarBtn" class="w-10 h-10 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 flex items-center justify-center font-bold text-slate-950 cursor-pointer hover:ring-2 ring-cyan-400 transition relative" title="Switch Active Member Profile">
+                    <span id="currentUserInitials">AX</span>
+                    <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-400 border-2 border-slate-950 rounded-full"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Channel & Direct Message Sidebar -->
+        <div id="sidebar" class="w-80 glass-card border-r border-white/10 flex flex-col z-10 transition-all duration-300 absolute md:relative inset-y-0 left-16 md:left-0 -translate-x-full md:translate-x-0 shrink-0">
+            <!-- Sidebar Header -->
+            <div class="p-4 border-b border-white/10 flex flex-col gap-3">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="font-bold text-lg tracking-wide text-white flex items-center gap-2">
+                            Quantum Core
+                            <span class="text-[10px] bg-cyan-500/20 text-cyan-300 border border-cyan-400/30 px-2 py-0.5 rounded-full font-mono">PRO</span>
+                        </h2>
+                        <p class="text-xs text-slate-400">12 Active Team Members</p>
+                    </div>
+                    <button id="createChannelBtn" class="p-1.5 rounded-lg bg-white/5 border border-white/10 text-slate-300 hover:text-cyan-400 hover:bg-white/10 transition" title="New Channel">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    </button>
+                </div>
+                <!-- Global Quick Filter Search -->
+                <div class="relative">
+                    <input type="text" id="sidebarSearch" placeholder="Filter channels or direct messages..." class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-400 focus:outline-none focus:border-cyan-400/60 focus:ring-1 focus:ring-cyan-400/40 transition">
+                    <svg class="w-4 h-4 absolute right-3 top-2.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                </div>
+            </div>
+
+            <!-- Navigation Sections -->
+            <div class="flex-1 overflow-y-auto px-3 py-4 space-y-6">
+                <!-- Channels List -->
+                <div>
+                    <div class="flex items-center justify-between text-xs font-semibold text-slate-400 uppercase tracking-wider px-2 mb-2">
+                        <span>Channels</span>
+                        <span class="text-[10px] bg-white/10 px-1.5 py-0.5 rounded font-mono" id="channelCount">4</span>
+                    </div>
+                    <div id="channelsContainer" class="space-y-1">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+
+                <!-- Direct Messages List -->
+                <div>
+                    <div class="flex items-center justify-between text-xs font-semibold text-slate-400 uppercase tracking-wider px-2 mb-2">
+                        <span>Direct Messages</span>
+                        <span class="text-[10px] bg-white/10 px-1.5 py-0.5 rounded font-mono" id="dmCount">4</span>
+                    </div>
+                    <div id="dmContainer" class="space-y-1">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+
+                <!-- Shared Workspace Utilities -->
+                <div>
+                    <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider px-2 mb-2">
+                        <span>Collaboration Space</span>
+                    </div>
+                    <div class="space-y-1">
+                        <button id="openWhiteboardBtn" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-slate-300 hover:bg-white/5 hover:text-white transition group">
+                            <div class="w-7 h-7 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center group-hover:scale-110 transition">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                            </div>
+                            <span>Shared Whiteboard</span>
+                        </button>
+                        <button id="openTasksBtn" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-slate-300 hover:bg-white/5 hover:text-white transition group">
+                            <div class="w-7 h-7 rounded-lg bg-pink-500/20 text-pink-400 flex items-center justify-center group-hover:scale-110 transition">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                            </div>
+                            <span>Sprint Kanban Board</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active User Quick Status Switcher Footbar -->
+            <div class="p-3 border-t border-white/10 bg-slate-950/40 flex items-center justify-between">
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <div id="footAvatar" class="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-400 font-bold flex items-center justify-center text-xs shrink-0 border border-cyan-400/30">
+                        AX
+                    </div>
+                    <div class="truncate">
+                        <div id="footName" class="text-xs font-semibold text-white truncate">Alex Vance</div>
+                        <div id="footStatusText" class="text-[10px] text-cyan-400 truncate">Online • Lead Architect</div>
+                    </div>
+                </div>
+                <button id="toggleStatusBtn" class="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-white/5 transition" title="Toggle Presence">
+                    <div class="w-2.5 h-2.5 rounded-full bg-emerald-400 status-pulse"></div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Center Chat Area -->
+        <div class="flex-1 flex flex-col h-full relative overflow-hidden bg-slate-950/30 backdrop-blur-md">
+            <!-- Header Bar -->
+            <div class="h-16 border-b border-white/10 px-4 flex items-center justify-between bg-slate-900/40 backdrop-blur-xl z-10 shrink-0">
+                <div class="flex items-center gap-3 min-w-0">
+                    <!-- Mobile Sidebar Toggle -->
+                    <button id="mobileSidebarToggle" class="md:hidden p-2 text-slate-300 hover:text-cyan-400 rounded-lg hover:bg-white/5">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    </button>
+                    <!-- Target Icon & Title -->
+                    <div id="chatHeaderIcon" class="w-10 h-10 rounded-xl bg-cyan-500/20 border border-cyan-400/30 text-cyan-400 flex items-center justify-center font-bold shrink-0">
+                        #
+                    </div>
+                    <div class="min-w-0">
+                        <div class="flex items-center gap-2">
+                            <h3 id="chatHeaderTitle" class="font-bold text-white text-base tracking-wide truncate"># general-tech</h3>
+                            <span id="chatHeaderBadge" class="text-[10px] bg-white/10 px-2 py-0.5 rounded-full text-slate-300 hidden md:inline-block">Public</span>
+                        </div>
+                        <div id="chatHeaderSubtitle" class="text-xs text-slate-400 truncate flex items-center gap-2">
+                            <span>Main tech stack, architectural sync, and release updates.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Header Actions -->
+                <div class="flex items-center gap-1.5 md:gap-3 shrink-0">
+                    <button id="startCallBtn" class="glass-btn px-3 py-1.5 rounded-xl text-xs font-medium text-slate-200 flex items-center gap-2 hover:text-cyan-400">
+                        <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                        <span class="hidden lg:inline">Audio Huddle</span>
+                    </button>
+                    <button id="toggleDrawerBtn" class="p-2 text-slate-400 hover:text-cyan-400 hover:bg-white/5 rounded-xl transition" title="Toggle Info Panel">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Messages Scroll Stream -->
+            <div id="messagesContainer" class="flex-1 overflow-y-auto p-4 md:p-6 space-y-4">
+                <!-- Rendered dynamically -->
+            </div>
+
+            <!-- Live Typing Indicators Banner -->
+            <div id="typingBanner" class="h-6 px-6 text-xs text-cyan-300 flex items-center gap-2 opacity-0 transition-opacity duration-300 pointer-events-none">
+                <div class="flex items-center gap-1">
+                    <span class="typing-dot"></span>
+                    <span class="typing-dot"></span>
+                    <span class="typing-dot"></span>
+                </div>
+                <span id="typingNames" class="font-mono text-[11px]">Kaelen is typing...</span>
+            </div>
+
+            <!-- Input Dock Container -->
+            <div class="p-3 md:p-4 bg-slate-900/60 backdrop-blur-xl border-t border-white/10 shrink-0">
+                <!-- Formatting Quick Bar / Code / File upload actions -->
+                <div class="flex items-center gap-2 mb-2 px-1">
+                    <button id="openCodeModalBtn" class="p-1.5 text-slate-400 hover:text-cyan-400 hover:bg-white/5 rounded-lg text-xs font-mono flex items-center gap-1 transition" title="Insert Code Snippet">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+                        <span>Code</span>
+                    </button>
+                    <button id="openPollModalBtn" class="p-1.5 text-slate-400 hover:text-purple-400 hover:bg-white/5 rounded-lg text-xs flex items-center gap-1 transition" title="Create Quick Poll">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                        <span>Poll</span>
+                    </button>
+                    <button id="triggerAiBtn" class="p-1.5 text-slate-400 hover:text-pink-400 hover:bg-white/5 rounded-lg text-xs flex items-center gap-1 transition" title="Ask Aether AI Assistant">
+                        <svg class="w-4 h-4 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        <span class="text-pink-300 font-semibold">@Aether</span>
+                    </button>
+                    <label class="p-1.5 text-slate-400 hover:text-cyan-400 hover:bg-white/5 rounded-lg text-xs flex items-center gap-1 cursor-pointer transition" title="Attach File">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
+                        <input type="file" id="fileInput" class="hidden">
+                        <span>Attach</span>
+                    </label>
+                </div>
+
+                <!-- Input Field Row -->
+                <div class="flex items-end gap-2">
+                    <div class="flex-1 relative flex items-center">
+                        <textarea id="messageInput" rows="1" placeholder="Type a message or command... (Shift+Enter for newline)" class="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 pr-10 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400/60 focus:ring-1 focus:ring-cyan-400/30 transition resize-none max-h-32 min-h-[46px]"></textarea>
+                        
+                        <!-- Quick Emoji Trigger -->
+                        <button id="emojiBtn" class="absolute right-3 text-slate-400 hover:text-cyan-400 p-1 transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </button>
+                    </div>
+
+                    <!-- Voice Record Button -->
+                    <button id="voiceRecBtn" class="w-11 h-11 rounded-2xl bg-white/5 border border-white/10 text-slate-300 hover:text-cyan-400 hover:bg-white/10 hover:border-cyan-400/40 flex items-center justify-center shrink-0 transition" title="Record Voice Note">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+                    </button>
+
+                    <!-- Send Button -->
+                    <button id="sendMessageBtn" disabled class="w-11 h-11 rounded-2xl bg-cyan-400 text-slate-950 font-bold flex items-center justify-center shrink-0 disabled:opacity-30 disabled:cursor-not-allowed hover:scale-105 active:scale-95 shadow-lg shadow-cyan-400/20 transition">
+                        <svg class="w-5 h-5 fill-current transform rotate-90" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Info & Utility Panel Drawer -->
+        <div id="rightDrawer" class="w-80 glass-card border-l border-white/10 flex flex-col z-10 transition-all duration-300 absolute lg:relative inset-y-0 right-0 translate-x-full lg:translate-x-0 hidden md:flex shrink-0">
+            <!-- Drawer Tabs -->
+            <div class="flex border-b border-white/10">
+                <button class="drawer-tab active flex-1 py-3 text-xs font-semibold border-b-2 border-cyan-400 text-cyan-400" data-tab="details">Details</button>
+                <button class="drawer-tab flex-1 py-3 text-xs font-semibold text-slate-400 hover:text-white" data-tab="pinned">Pinned (2)</button>
+                <button class="drawer-tab flex-1 py-3 text-xs font-semibold text-slate-400 hover:text-white" data-tab="members">Members</button>
+            </div>
+
+            <!-- Tab Content Area -->
+            <div class="flex-1 overflow-y-auto p-4 space-y-6">
+                <!-- Tab: Details -->
+                <div id="tab-details" class="space-y-5">
+                    <div>
+                        <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">About Channel</h4>
+                        <p class="text-xs text-slate-300 leading-relaxed bg-white/5 border border-white/10 p-3 rounded-xl">
+                            Architectural discussion for quantum encryption layer protocols, microservices sync, and realtime web sockets.
+                        </p>
+                    </div>
+
+                    <div>
+                        <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Shared Files & Media</h4>
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between p-2.5 rounded-xl bg-white/5 border border-white/10 text-xs">
+                                <div class="flex items-center gap-2 truncate">
+                                    <div class="p-2 rounded-lg bg-cyan-500/20 text-cyan-400">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                                    </div>
+                                    <span class="text-slate-200 truncate">quantum_specs_v3.pdf</span>
+                                </div>
+                                <span class="text-[10px] text-slate-500">2.4MB</span>
+                            </div>
+                            <div class="flex items-center justify-between p-2.5 rounded-xl bg-white/5 border border-white/10 text-xs">
+                                <div class="flex items-center gap-2 truncate">
+                                    <div class="p-2 rounded-lg bg-purple-500/20 text-purple-400">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                    </div>
+                                    <span class="text-slate-200 truncate">architecture_diagram.png</span>
+                                </div>
+                                <span class="text-[10px] text-slate-500">1.8MB</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Pinned -->
+                <div id="tab-pinned" class="space-y-3 hidden">
+                    <div class="p-3 rounded-xl bg-white/5 border border-cyan-400/30 text-xs space-y-1">
+                        <div class="flex items-center justify-between text-cyan-400 font-semibold">
+                            <span>Kaelen Ross</span>
+                            <span class="text-[10px] text-slate-400">Yesterday</span>
+                        </div>
+                        <p class="text-slate-200">"Please ensure all core API calls use exponential backoff retry patterns."</p>
+                    </div>
+                    <div class="p-3 rounded-xl bg-white/5 border border-white/10 text-xs space-y-1">
+                        <div class="flex items-center justify-between text-purple-400 font-semibold">
+                            <span>Elena Rostova</span>
+                            <span class="text-[10px] text-slate-400">3 days ago</span>
+                        </div>
+                        <p class="text-slate-200">"Sprint 4 deployment scheduled for Friday midnight UTC."</p>
+                    </div>
+                </div>
+
+                <!-- Tab: Members -->
+                <div id="tab-members" class="space-y-2 hidden">
+                    <div id="membersList" class="space-y-2">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- SETTINGS MODAL -->
+    <div id="settingsModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-xl z-50 flex items-center justify-center p-4 hidden">
+        <div class="w-full max-w-md glass-card rounded-3xl p-6 space-y-6 border border-white/10 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-white/10 pb-4">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    Workspace & Audio Settings
+                </h3>
+                <button id="closeSettingsBtn" class="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-white/10">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <!-- Settings Options -->
+            <div class="space-y-5 text-xs">
+                <!-- Theme Presets -->
+                <div>
+                    <label class="block text-slate-400 font-semibold mb-2">Visual Theme Preset</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button class="theme-preset-btn p-3 rounded-xl border border-cyan-400/50 bg-cyan-950/40 text-cyan-300 font-semibold" data-theme="cyber">Cyber Cyan</button>
+                        <button class="theme-preset-btn p-3 rounded-xl border border-white/10 bg-slate-900/40 text-slate-300 font-semibold hover:border-purple-400" data-theme="purple">Neon Synth</button>
+                        <button class="theme-preset-btn p-3 rounded-xl border border-white/10 bg-slate-950/80 text-slate-300 font-semibold hover:border-emerald-400" data-theme="dark">Obsidian</button>
+                    </div>
+                </div>
+
+                <!-- Audio Synth Notifications Toggle -->
+                <div class="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/10">
+                    <div>
+                        <div class="font-semibold text-white">Audio FX & Sound Alerts</div>
+                        <div class="text-[11px] text-slate-400">Play futuristic sound effects on send & receive</div>
+                    </div>
+                    <input type="checkbox" id="soundFxToggle" checked class="w-5 h-5 accent-cyan-400 rounded cursor-pointer">
+                </div>
+
+                <!-- Desktop Notifications Toggle -->
+                <div class="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/10">
+                    <div>
+                        <div class="font-semibold text-white">Desktop Popups</div>
+                        <div class="text-[11px] text-slate-400">Show notification toasts for active chats</div>
+                    </div>
+                    <input type="checkbox" id="desktopNotifToggle" checked class="w-5 h-5 accent-cyan-400 rounded cursor-pointer">
+                </div>
+
+                <!-- Simulated AI Auto-Respond Toggle -->
+                <div class="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/10">
+                    <div>
+                        <div class="font-semibold text-white">Bot & Teammate Simulation</div>
+                        <div class="text-[11px] text-slate-400">Automate simulated replies & typing indicators</div>
+                    </div>
+                    <input type="checkbox" id="botSimToggle" checked class="w-5 h-5 accent-cyan-400 rounded cursor-pointer">
+                </div>
+            </div>
+
+            <button id="saveSettingsBtn" class="w-full py-3 rounded-2xl bg-cyan-400 text-slate-950 font-bold hover:bg-cyan-300 transition shadow-lg shadow-cyan-400/20">
+                Apply Preferences
+            </button>
+        </div>
+    </div>
+
+    <!-- CODE SNIPPET MODAL -->
+    <div id="codeModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-xl z-50 flex items-center justify-center p-4 hidden">
+        <div class="w-full max-w-xl glass-card rounded-3xl p-6 space-y-4 border border-white/10">
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+                <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+                Share Code Snippet
+            </h3>
+            <textarea id="codeSnippetInput" rows="8" placeholder="// Paste code snippet here..." class="w-full bg-slate-950/80 border border-white/10 rounded-2xl p-4 font-mono text-xs text-cyan-300 focus:outline-none focus:border-cyan-400"></textarea>
+            <div class="flex justify-end gap-3">
+                <button id="cancelCodeBtn" class="px-4 py-2 rounded-xl bg-white/5 text-xs text-slate-300 hover:bg-white/10">Cancel</button>
+                <button id="submitCodeBtn" class="px-4 py-2 rounded-xl bg-cyan-400 text-xs font-bold text-slate-950 hover:bg-cyan-300">Share Snippet</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SHARED WHITEBOARD MODAL -->
+    <div id="whiteboardModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-2xl z-50 flex flex-col p-4 hidden">
+        <div class="flex items-center justify-between pb-4 border-b border-white/10">
+            <h3 class="font-bold text-lg text-white flex items-center gap-2">
+                <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                Live Team Whiteboard Scratchpad
+            </h3>
+            <div class="flex items-center gap-2">
+                <button id="clearBoardBtn" class="px-3 py-1.5 bg-white/5 border border-white/10 rounded-xl text-xs text-slate-300 hover:text-white">Clear</button>
+                <button id="closeWhiteboardBtn" class="p-2 bg-white/10 rounded-xl text-slate-300 hover:text-white">✕</button>
+            </div>
+        </div>
+        <div class="flex-1 my-4 bg-slate-900/60 rounded-2xl border border-white/10 relative overflow-hidden flex items-center justify-center">
+            <canvas id="whiteboardCanvas" class="w-full h-full cursor-crosshair"></canvas>
+        </div>
+    </div>
+
+    <script>
+        // --- State Management ---
+        const state = {
+            currentUser: {
+                id: 'u1',
+                name: 'Alex Vance',
+                role: 'Lead Architect',
+                avatar: 'AX',
+                status: 'online'
+            },
+            currentChat: {
+                id: 'c1',
+                type: 'channel', // 'channel' or 'dm'
+                name: '# general-tech',
+                description: 'Main tech stack, architectural sync, and release updates.',
+                icon: '#'
+            },
+            settings: {
+                theme: 'cyber',
+                sound: true,
+                desktopNotif: true,
+                botSim: true
+            },
+            teamMembers: [
+                { id: 'u1', name: 'Alex Vance', role: 'Lead Architect', avatar: 'AX', status: 'online', color: 'cyan' },
+                { id: 'u2', name: 'Kaelen Ross', role: 'Core Engineer', avatar: 'KR', status: 'online', color: 'purple' },
+                { id: 'u3', name: 'Elena Rostova', role: 'Product Lead', avatar: 'ER', status: 'busy', color: 'pink' },
+                { id: 'u4', name: 'Marcus Chen', role: 'DevOps Lead', avatar: 'MC', status: 'offline', color: 'emerald' },
+                { id: 'u5', name: 'Aether AI', role: 'Collab Bot', avatar: 'AI', status: 'online', color: 'cyan' }
+            ],
+            channels: [
+                { id: 'c1', name: '# general-tech', description: 'Main tech stack & architectural sync.', unread: 0 },
+                { id: 'c2', name: '# project-alpha', description: 'Next-gen microservices refactor.', unread: 2 },
+                { id: 'c3', name: '# code-lab', description: 'Snippets, reviews, and algorithm performance.', unread: 0 },
+                { id: 'c4', name: '# announcements', description: 'Official company-wide news.', unread: 0 }
+            ],
+            dms: [
+                { id: 'u2', name: 'Kaelen Ross', avatar: 'KR', status: 'online', unread: 1 },
+                { id: 'u3', name: 'Elena Rostova', avatar: 'ER', status: 'busy', unread: 0 },
+                { id: 'u4', name: 'Marcus Chen', avatar: 'MC', status: 'offline', unread: 0 },
+                { id: 'u5', name: 'Aether AI Assistant', avatar: 'AI', status: 'online', unread: 0 }
+            ],
+            messages: {
+                'c1': [
+                    { id: 'm1', senderId: 'u2', senderName: 'Kaelen Ross', avatar: 'KR', text: 'Hey team! Live WebSocket sync engine is now ready for stress testing.', time: '10:14 AM', reactions: { '🚀': ['u1', 'u3'], '🔥': ['u1'] } },
+                    { id: 'm2', senderId: 'u3', senderName: 'Elena Rostova', avatar: 'ER', text: 'Awesome progress Kaelen! What is our targeted bandwidth latency?', time: '10:16 AM', reactions: {} },
+                    { id: 'm3', senderId: 'u2', senderName: 'Kaelen Ross', avatar: 'KR', text: 'Sub-15ms globally across our web workers container nodes.', time: '10:18 AM', reactions: { '👍': ['u1'] } }
+                ],
+                'c2': [
+                    { id: 'm10', senderId: 'u3', senderName: 'Elena Rostova', avatar: 'ER', text: 'Sprint board updated for Project Alpha.', time: '09:30 AM', reactions: {} }
+                ],
+                'u2': [
+                    { id: 'm20', senderId: 'u2', senderName: 'Kaelen Ross', avatar: 'KR', text: 'Hey Alex, do you have 5 mins to review the PR?', time: '11:02 AM', reactions: {} }
+                ]
+            }
+        };
+
+        // --- STREAMING_CHUNK:Implementing Audio Synthesizer Engine (Web Audio API)... ---
+        // Web Audio Synthesizer for UI sound effects (No broken MP3 links)
+        const AudioEngine = {
+            ctx: null,
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            },
+            playSend() {
+                if (!state.settings.sound) return;
+                this.init();
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(440, now);
+                osc.frequency.exponentialRampToValueAtTime(880, now + 0.12);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.12);
+            },
+            playReceive() {
+                if (!state.settings.sound) return;
+                this.init();
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(587.33, now); // D5
+                osc.frequency.setValueAtTime(880, now + 0.08); // A5
+                gain.gain.setValueAtTime(0.12, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.2);
+            },
+            playPop() {
+                if (!state.settings.sound) return;
+                this.init();
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.exponentialRampToValueAtTime(600, now + 0.05);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.05);
+            }
+        };
+
+        // --- STREAMING_CHUNK:Binding DOM Elements and Controls... ---
+        // DOM Elements
+        const elements = {
+            channelsContainer: document.getElementById('channelsContainer'),
+            dmContainer: document.getElementById('dmContainer'),
+            messagesContainer: document.getElementById('messagesContainer'),
+            messageInput: document.getElementById('messageInput'),
+            sendMessageBtn: document.getElementById('sendMessageBtn'),
+            chatHeaderTitle: document.getElementById('chatHeaderTitle'),
+            chatHeaderSubtitle: document.getElementById('chatHeaderSubtitle'),
+            chatHeaderIcon: document.getElementById('chatHeaderIcon'),
+            typingBanner: document.getElementById('typingBanner'),
+            typingNames: document.getElementById('typingNames'),
+            sidebarSearch: document.getElementById('sidebarSearch'),
+            settingsModal: document.getElementById('settingsModal'),
+            openSettingsBtn: document.getElementById('openSettingsBtn'),
+            closeSettingsBtn: document.getElementById('closeSettingsBtn'),
+            saveSettingsBtn: document.getElementById('saveSettingsBtn'),
+            codeModal: document.getElementById('codeModal'),
+            openCodeModalBtn: document.getElementById('openCodeModalBtn'),
+            cancelCodeBtn: document.getElementById('cancelCodeBtn'),
+            submitCodeBtn: document.getElementById('submitCodeBtn'),
+            codeSnippetInput: document.getElementById('codeSnippetInput'),
+            whiteboardModal: document.getElementById('whiteboardModal'),
+            openWhiteboardBtn: document.getElementById('openWhiteboardBtn'),
+            closeWhiteboardBtn: document.getElementById('closeWhiteboardBtn'),
+            clearBoardBtn: document.getElementById('clearBoardBtn'),
+            rightDrawer: document.getElementById('rightDrawer'),
+            toggleDrawerBtn: document.getElementById('toggleDrawerBtn'),
+            mobileSidebarToggle: document.getElementById('mobileSidebarToggle'),
+            sidebar: document.getElementById('sidebar'),
+            currentUserAvatarBtn: document.getElementById('currentUserAvatarBtn'),
+            footAvatar: document.getElementById('footAvatar'),
+            footName: document.getElementById('footName'),
+            triggerAiBtn: document.getElementById('triggerAiBtn'),
+            voiceRecBtn: document.getElementById('voiceRecBtn'),
+            membersList: document.getElementById('membersList')
+        };
+
+        // --- STREAMING_CHUNK:Rendering Engine (Channels, DMs, Messages, Members)... ---
+        function renderSidebar() {
+            // Render Channels
+            elements.channelsContainer.innerHTML = state.channels.map(ch => {
+                const isActive = state.currentChat.type === 'channel' && state.currentChat.id === ch.id;
+                return `
+                    <button class="channel-item w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition ${isActive ? 'bg-cyan-500/15 border border-cyan-400/40 text-cyan-300 shadow-sm' : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'}" data-id="${ch.id}" data-type="channel">
+                        <span class="truncate flex items-center gap-2">
+                            <span class="text-cyan-400 font-bold">#</span>
+                            <span class="truncate">${ch.name.replace('# ', '')}</span>
+                        </span>
+                        ${ch.unread > 0 ? `<span class="px-1.5 py-0.5 rounded-full bg-cyan-400 text-slate-950 font-bold text-[10px]">${ch.unread}</span>` : ''}
+                    </button>
+                `;
+            }).join('');
+
+            // Render Direct Messages
+            elements.dmContainer.innerHTML = state.dms.map(dm => {
+                const isActive = state.currentChat.type === 'dm' && state.currentChat.id === dm.id;
+                return `
+                    <button class="dm-item w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition ${isActive ? 'bg-cyan-500/15 border border-cyan-400/40 text-cyan-300 shadow-sm' : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'}" data-id="${dm.id}" data-type="dm">
+                        <div class="flex items-center gap-2.5 truncate">
+                            <div class="relative w-6 h-6 rounded-lg bg-white/10 flex items-center justify-center font-bold text-[10px] text-white">
+                                ${dm.avatar}
+                                <span class="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full ${dm.status === 'online' ? 'bg-emerald-400' : dm.status === 'busy' ? 'bg-amber-400' : 'bg-slate-500'} border border-slate-900"></span>
+                            </div>
+                            <span class="truncate">${dm.name}</span>
+                        </div>
+                        ${dm.unread > 0 ? `<span class="px-1.5 py-0.5 rounded-full bg-cyan-400 text-slate-950 font-bold text-[10px]">${dm.unread}</span>` : ''}
+                    </button>
+                `;
+            }).join('');
+
+            // Bind click listeners
+            document.querySelectorAll('.channel-item, .dm-item').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = btn.getAttribute('data-id');
+                    const type = btn.getAttribute('data-type');
+                    switchChat(id, type);
+                });
+            });
+
+            // Render Members Drawer list
+            elements.membersList.innerHTML = state.teamMembers.map(m => `
+                <div class="flex items-center gap-3 p-2 rounded-xl bg-white/5 border border-white/5 text-xs">
+                    <div class="w-7 h-7 rounded-lg bg-cyan-500/20 text-cyan-400 font-bold flex items-center justify-center text-xs">
+                        ${m.avatar}
+                    </div>
+                    <div class="truncate flex-1">
+                        <div class="text-slate-200 font-medium truncate">${m.name}</div>
+                        <div class="text-[10px] text-slate-400 truncate">${m.role}</div>
+                    </div>
+                    <span class="w-2 h-2 rounded-full ${m.status === 'online' ? 'bg-emerald-400' : 'bg-slate-500'}"></span>
+                </div>
+            `).join('');
+        }
+
+        function switchChat(id, type) {
+            if (type === 'channel') {
+                const ch = state.channels.find(c => c.id === id);
+                if (!ch) return;
+                ch.unread = 0;
+                state.currentChat = { id: ch.id, type: 'channel', name: ch.name, description: ch.description, icon: '#' };
+            } else {
+                const dm = state.dms.find(d => d.id === id);
+                if (!dm) return;
+                dm.unread = 0;
+                state.currentChat = { id: dm.id, type: 'dm', name: dm.name, description: 'Direct Message session', icon: dm.avatar };
+            }
+
+            // Update Header
+            elements.chatHeaderTitle.textContent = state.currentChat.name;
+            elements.chatHeaderSubtitle.textContent = state.currentChat.description;
+            elements.chatHeaderIcon.textContent = state.currentChat.icon;
+
+            renderSidebar();
+            renderMessages();
+
+            // Mobile view adjustment
+            if (window.innerWidth < 768) {
+                elements.sidebar.classList.add('-translate-x-full');
+            }
+        }
+
+        function renderMessages() {
+            const chatMsgs = state.messages[state.currentChat.id] || [];
+            elements.messagesContainer.innerHTML = '';
+
+            if (chatMsgs.length === 0) {
+                elements.messagesContainer.innerHTML = `
+                    <div class="h-full flex flex-col items-center justify-center text-center p-6 text-slate-500 space-y-3">
+                        <div class="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-cyan-400 text-2xl font-bold">
+                            ${state.currentChat.icon}
+                        </div>
+                        <h4 class="text-sm font-semibold text-slate-300">Welcome to ${state.currentChat.name}</h4>
+                        <p class="text-xs max-w-sm">This is the beginning of the workspace stream. Send a message or code snippet to kick off collaboration.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            chatMsgs.forEach(msg => {
+                const isMe = msg.senderId === state.currentUser.id;
+                const msgEl = document.createElement('div');
+                msgEl.className = `flex gap-3 msg-anim ${isMe ? 'flex-row-reverse' : ''}`;
+
+                // Reactions HTML
+                let reactionsHtml = '';
+                if (msg.reactions && Object.keys(msg.reactions).length > 0) {
+                    reactionsHtml = `<div class="flex flex-wrap gap-1 mt-2">` +
+                        Object.entries(msg.reactions).map(([emoji, users]) => `
+                            <button class="reaction-badge px-2 py-0.5 rounded-lg bg-white/5 border border-white/10 text-xs flex items-center gap-1 hover:bg-white/10 transition ${users.includes(state.currentUser.id) ? 'border-cyan-400/50 text-cyan-300' : 'text-slate-400'}" data-msg="${msg.id}" data-emoji="${emoji}">
+                                <span>${emoji}</span>
+                                <span class="font-mono text-[10px]">${users.length}</span>
+                            </button>
+                        `).join('') + `</div>`;
+                }
+
+                // Check for Code Block or Audio Tag
+                let bodyContent = `<p class="whitespace-pre-wrap leading-relaxed">${msg.text}</p>`;
+                if (msg.isCode) {
+                    bodyContent = `
+                        <div class="space-y-1">
+                            <div class="flex items-center justify-between text-[10px] text-cyan-400 font-mono border-b border-white/10 pb-1">
+                                <span>SNIPPET // CODE</span>
+                                <button class="hover:text-white" onclick="navigator.clipboard.writeText(\`${msg.text.replace(/`/g, '\\`')}\`)">Copy</button>
+                            </div>
+                            <pre class="font-mono text-xs text-cyan-200 overflow-x-auto p-2 bg-slate-950/80 rounded-xl">${msg.text}</pre>
+                        </div>
+                    `;
+                } else if (msg.isAudio) {
+                    bodyContent = `
+                        <div class="flex items-center gap-3 py-1">
+                            <button class="w-8 h-8 rounded-full bg-cyan-400 text-slate-950 flex items-center justify-center font-bold" onclick="AudioEngine.playPop()">▶</button>
+                            <div class="flex items-center gap-1 h-6">
+                                <div class="wave-bar"></div>
+                                <div class="wave-bar" style="animation-delay: -0.2s"></div>
+                                <div class="wave-bar" style="animation-delay: -0.4s"></div>
+                                <div class="wave-bar" style="animation-delay: -0.1s"></div>
+                                <div class="wave-bar" style="animation-delay: -0.5s"></div>
+                            </div>
+                            <span class="text-xs font-mono text-cyan-300">0:07</span>
+                        </div>
+                    `;
+                }
+
+                msgEl.innerHTML = `
+                    <div class="w-9 h-9 rounded-xl ${isMe ? 'bg-gradient-to-tr from-cyan-500 to-blue-600 text-slate-950' : 'bg-white/10 text-cyan-400'} font-bold flex items-center justify-center text-xs shrink-0 shadow-md">
+                        ${msg.avatar}
+                    </div>
+                    <div class="max-w-[80%] md:max-w-[65%] space-y-1">
+                        <div class="flex items-center gap-2 text-[11px] text-slate-400 ${isMe ? 'justify-end' : ''}">
+                            <span class="font-semibold text-slate-200">${msg.senderName}</span>
+                            <span>${msg.time}</span>
+                        </div>
+                        <div class="p-3.5 rounded-2xl text-xs ${isMe ? 'bg-gradient-to-r from-cyan-500/20 to-blue-600/20 border border-cyan-400/30 text-white rounded-tr-none' : 'bg-white/5 border border-white/10 text-slate-100 rounded-tl-none'} backdrop-blur-md">
+                            ${bodyContent}
+                            ${reactionsHtml}
+                        </div>
+                    </div>
+                `;
+
+                elements.messagesContainer.appendChild(msgEl);
+            });
+
+            // Smooth Scroll to bottom
+            setTimeout(() => {
+                elements.messagesContainer.scrollTop = elements.messagesContainer.scrollHeight;
+            }, 50);
+        }
+
+        // --- STREAMING_CHUNK:Sending Messages & Automated Simulation Handlers... ---
+        function sendCurrentMessage(textOverride = null, isCode = false, isAudio = false) {
+            const text = textOverride || elements.messageInput.value.trim();
+            if (!text) return;
+
+            const newMsg = {
+                id: 'm_' + Date.now(),
+                senderId: state.currentUser.id,
+                senderName: state.currentUser.name,
+                avatar: state.currentUser.avatar,
+                text: text,
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                isCode: isCode,
+                isAudio: isAudio,
+                reactions: {}
+            };
+
+            if (!state.messages[state.currentChat.id]) {
+                state.messages[state.currentChat.id] = [];
+            }
+            state.messages[state.currentChat.id].push(newMsg);
+
+            elements.messageInput.value = '';
+            elements.sendMessageBtn.disabled = true;
+            elements.messageInput.style.height = 'auto';
+
+            AudioEngine.playSend();
+            renderMessages();
+
+            // Handle Triggered AI or Teammate Simulation
+            if (state.settings.botSim) {
+                simulateTeammateResponse(text);
+            }
+        }
+
+        function simulateTeammateResponse(userText) {
+            // Show typing indicator after short delay
+            setTimeout(() => {
+                elements.typingNames.textContent = state.currentChat.id === 'u5' || userText.includes('@Aether') ? 'Aether AI Assistant is processing...' : 'Kaelen Ross is typing...';
+                elements.typingBanner.classList.remove('opacity-0');
+
+                setTimeout(() => {
+                    elements.typingBanner.classList.add('opacity-0');
+                    let replyText = "Understood. Synchronizing changes across workspace nodes.";
+                    let responder = state.teamMembers[1]; // Kaelen
+
+                    if (userText.includes('@Aether') || state.currentChat.id === 'u5') {
+                        responder = state.teamMembers[4]; // AI
+                        replyText = "Aether AI Analysis: Query analyzed. Architectural guidelines recommend using non-blocking I/O micro-threads for sub-millisecond execution.";
+                    }
+
+                    const replyMsg = {
+                        id: 'm_bot_' + Date.now(),
+                        senderId: responder.id,
+                        senderName: responder.name,
+                        avatar: responder.avatar,
+                        text: replyText,
+                        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                        reactions: { '👍': [state.currentUser.id] }
+                    };
+
+                    state.messages[state.currentChat.id].push(replyMsg);
+                    AudioEngine.playReceive();
+                    renderMessages();
+
+                }, 2000);
+            }, 800);
+        }
+
+        // --- STREAMING_CHUNK:Event Listeners & Modal Controls... ---
+        function initEvents() {
+            // Send Message Button & Textarea
+            elements.sendMessageBtn.addEventListener('click', () => sendCurrentMessage());
+            elements.messageInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendCurrentMessage();
+                }
+            });
+            elements.messageInput.addEventListener('input', () => {
+                elements.sendMessageBtn.disabled = !elements.messageInput.value.trim();
+                elements.messageInput.style.height = 'auto';
+                elements.messageInput.style.height = Math.min(elements.messageInput.scrollHeight, 120) + 'px';
+            });
+
+            // Quick AI Mention Button
+            elements.triggerAiBtn.addEventListener('click', () => {
+                elements.messageInput.value = "@Aether ";
+                elements.messageInput.focus();
+                elements.sendMessageBtn.disabled = false;
+            });
+
+            // Voice Record Simulation
+            elements.voiceRecBtn.addEventListener('click', () => {
+                sendCurrentMessage("Audio Voice Note (0:07)", false, true);
+            });
+
+            // Settings Modal
+            elements.openSettingsBtn.addEventListener('click', () => elements.settingsModal.classList.remove('hidden'));
+            elements.closeSettingsBtn.addEventListener('click', () => elements.settingsModal.classList.add('hidden'));
+            elements.saveSettingsBtn.addEventListener('click', () => {
+                state.settings.sound = document.getElementById('soundFxToggle').checked;
+                state.settings.desktopNotif = document.getElementById('desktopNotifToggle').checked;
+                state.settings.botSim = document.getElementById('botSimToggle').checked;
+                elements.settingsModal.classList.add('hidden');
+                AudioEngine.playPop();
+            });
+
+            // Code Snippet Modal
+            elements.openCodeModalBtn.addEventListener('click', () => elements.codeModal.classList.remove('hidden'));
+            elements.cancelCodeBtn.addEventListener('click', () => elements.codeModal.classList.add('hidden'));
+            elements.submitCodeBtn.addEventListener('click', () => {
+                const code = elements.codeSnippetInput.value.trim();
+                if (code) {
+                    sendCurrentMessage(code, true);
+                    elements.codeSnippetInput.value = '';
+                    elements.codeModal.classList.add('hidden');
+                }
+            });
+
+            // Drawer Toggle
+            elements.toggleDrawerBtn.addEventListener('click', () => {
+                elements.rightDrawer.classList.toggle('hidden');
+            });
+
+            // Mobile Sidebar Toggle
+            elements.mobileSidebarToggle.addEventListener('click', () => {
+                elements.sidebar.classList.toggle('-translate-x-full');
+            });
+
+            // Drawer Tabs
+            document.querySelectorAll('.drawer-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.drawer-tab').forEach(t => {
+                        t.classList.remove('border-b-2', 'border-cyan-400', 'text-cyan-400');
+                        t.classList.add('text-slate-400');
+                    });
+                    tab.classList.add('border-b-2', 'border-cyan-400', 'text-cyan-400');
+                    tab.classList.remove('text-slate-400');
+
+                    const tabTarget = tab.getAttribute('data-tab');
+                    document.getElementById('tab-details').classList.toggle('hidden', tabTarget !== 'details');
+                    document.getElementById('tab-pinned').classList.toggle('hidden', tabTarget !== 'pinned');
+                    document.getElementById('tab-members').classList.toggle('hidden', tabTarget !== 'members');
+                });
+            });
+
+            // User Profile Switcher Simulation
+            elements.currentUserAvatarBtn.addEventListener('click', () => {
+                // Toggle active user profile
+                if (state.currentUser.id === 'u1') {
+                    state.currentUser = { id: 'u2', name: 'Kaelen Ross', role: 'Core Engineer', avatar: 'KR', status: 'online' };
+                } else {
+                    state.currentUser = { id: 'u1', name: 'Alex Vance', role: 'Lead Architect', avatar: 'AX', status: 'online' };
+                }
+                document.getElementById('currentUserInitials').textContent = state.currentUser.avatar;
+                elements.footAvatar.textContent = state.currentUser.avatar;
+                elements.footName.textContent = state.currentUser.name;
+                elements.footStatusText.textContent = `Online • ${state.currentUser.role}`;
+                AudioEngine.playPop();
+                renderMessages();
+            });
+
+            // Whiteboard Modal & Canvas Initialization
+            initWhiteboard();
+        }
+
+        // --- STREAMING_CHUNK:Initializing Interactive Shared Whiteboard Canvas... ---
+        function initWhiteboard() {
+            const canvas = document.getElementById('whiteboardCanvas');
+            const ctx = canvas.getContext('2d');
+            let drawing = false;
+
+            function resizeCanvas() {
+                canvas.width = canvas.parentElement.clientWidth;
+                canvas.height = canvas.parentElement.clientHeight;
+                ctx.strokeStyle = '#00f2ff';
+                ctx.lineWidth = 3;
+                ctx.lineCap = 'round';
+            }
+
+            elements.openWhiteboardBtn.addEventListener('click', () => {
+                elements.whiteboardModal.classList.remove('hidden');
+                setTimeout(resizeCanvas, 100);
+            });
+            elements.closeWhiteboardBtn.addEventListener('click', () => elements.whiteboardModal.classList.add('hidden'));
+            elements.clearBoardBtn.addEventListener('click', () => ctx.clearRect(0, 0, canvas.width, canvas.height));
+
+            canvas.addEventListener('mousedown', (e) => { drawing = true; ctx.beginPath(); ctx.moveTo(e.offsetX, e.offsetY); });
+            canvas.addEventListener('mousemove', (e) => {
+                if (drawing) {
+                    ctx.lineTo(e.offsetX, e.offsetY);
+                    ctx.stroke();
+                }
+            });
+            canvas.addEventListener('mouseup', () => drawing = false);
+            canvas.addEventListener('mouseleave', () => drawing = false);
+        }
+
+        // --- STREAMING_CHUNK:Bootstrapping Application... ---
+        window.addEventListener('load', () => {
+            renderSidebar();
+            renderMessages();
+            initEvents();
+        });
+    </script>
+</body>
+</html>
