@@ -1,31 +1,32 @@
 {
-  "id": "/",
-  "name": "Langis",
-  "short_name": "Langis",
-  "description": "Langis Messaging App",
-  "start_url": "/",
-  "scope": "/",
+  "background_color": "#3600ff",
+  "dir": "ltr",
   "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#2563eb",
-  "orientation": "portrait-primary",
+  "name": "Langis",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "Langis",
+  "start_url": "/",
+  "theme_color": "#00cafe",
   "icons": [
     {
-      "src": "icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "src": "https://task-eagle.github.io/langis-v1.0/favicon.ico",
+      "type": "image/x-icon",
+      "isSquare": false,
+      "isPng": false,
+      "isWebp": false,
+      "isJpg": false,
+      "width": 0,
+      "is512x512": false,
+      "is256x256": false,
+      "is192x192": false
     }
   ],
+  "id": "langis-future-chat",
+  "description": "Langis Future chat enables users to chat instantly and securely with other users online!",
   "categories": [
-    "education",
-    "Social",
-    "productivity"
+    "productivity",
+    "social",
+    "utilities"
   ]
 }
