@@ -1,8 +1,0 @@
-{
-  "name": "Langis Messaging App",
-  "description": "Message your Friends with ease, meet new friends, and chat securely on Langis!",
-  "requestFramePermissions": [],
-  "majorCapabilities": [
-    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
-  ]
-}
