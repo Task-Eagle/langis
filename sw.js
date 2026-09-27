@@ -3,7 +3,7 @@ const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
   '/manifest.json',
-  '/favicon.png',
+  '/favicon.ico',
   'https://cdn.tailwindcss.com',
   './icon-192.png',
   './icon-512.png'
